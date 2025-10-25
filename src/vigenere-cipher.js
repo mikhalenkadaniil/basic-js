@@ -20,14 +20,57 @@ const { NotImplementedError } = require('../lib');
  *
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    // Remove line below and write your code here
-    throw new NotImplementedError('Not implemented');
+  constructor(type = true) {
+    this.alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    this.isDirect = type !== false;
   }
 
-  decrypt() {
-    // Remove line below and write your code here
-    throw new NotImplementedError('Not implemented');
+  encrypt(message, key) {
+    if (!message || !key) throw new Error('Incorrect arguments!');
+    message = message.toUpperCase();
+    key = key.toUpperCase();
+
+    let result = '';
+    let keyIndex = 0;
+
+    for (let i = 0; i < message.length; i++) {
+      const char = message[i];
+      if (this.alph.includes(char)) {
+        const mIndex = this.alph.indexOf(char);
+        const kIndex = this.alph.indexOf(key[keyIndex % key.length]);
+        const cIndex = (mIndex + kIndex) % this.alph.length;
+        result += this.alph[cIndex];
+        keyIndex++;
+      } else {
+        result += char;
+      }
+    }
+
+    return this.isDirect ? result : result.split('').reverse().join('');
+  }
+
+  decrypt(message, key) {
+    if (!message || !key) throw new Error('Incorrect arguments!');
+    message = message.toUpperCase();
+    key = key.toUpperCase();
+
+    let result = '';
+    let keyIndex = 0;
+
+    for (let i = 0; i < message.length; i++) {
+      const char = message[i];
+      if (this.alph.includes(char)) {
+        const cIndex = this.alph.indexOf(char);
+        const kIndex = this.alph.indexOf(key[keyIndex % key.length]);
+        const mIndex = (cIndex - kIndex + this.alph.length) % this.alph.length;
+        result += this.alph[mIndex];
+        keyIndex++;
+      } else {
+        result += char;
+      }
+    }
+
+    return this.isDirect ? result : result.split('').reverse().join('');
   }
 }
 
